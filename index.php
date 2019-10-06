@@ -1,3 +1,7 @@
+<?php
+  include_once '10.10.168.100/includes/db_connect.php';
+
+?>
 <!doctype html>
 <html lang="en">
 <head>
@@ -99,18 +103,46 @@
                     </form>
                     <div class="container">
                         <div class="row">
-                            <button value="12345,tusker cider,150" class="col-md-2 tsk" style="border:1px solid gray;margin-top:8px;margin-right:8px;" id="product">
-                                Tusker cider
-                            </button>
-                            <button value="765468,tusker ova,150" class="col-md-2 tsk" style="border:1px solid gray;margin-top:8px;margin-right:8px;" id="product">
-                                Tusker ova
-                            </button>
-                            <button value="097653,tusker mango,150" class="col-md-2 tsk" style="border:1px solid gray;margin-top:8px;margin-right:8px;" id="product">
-                                Tusker mango
-                            </button>
-                            <button value="234546,tusker lager,150" class="col-md-2 tsk" style="border:1px solid gray;margin-top:8px;margin-right:8px;" id="product">
-                                Tusker lager
-                            </button>
+
+                            <div>
+                                <button class="btn btn-primary btn-sm">All</button>
+                                <?php
+                                $sql = "SELECT name,category_id FROM category";
+                                $exe = $connect->query($sql);
+                                while($row = $exe->fetch_assoc()) {
+
+                                    $id = $row['category_id'];
+                                    ?>
+                                    <button class="btn btn-default btn-sm" value="<?=$id?>"><?=$row['name']?></button>
+
+                                    <?php
+
+                                }
+
+                                ?>
+                            </div>
+                            <?php
+                                $sql = "SELECT * FROM product WHERE quantity>0";
+                                $exe = $connect->query($sql);
+                                while($row = $exe->fetch_assoc())
+                                {
+                                    $product = array($row['code'],$row['name'],$row['sp']);
+                                    $image = $row['image'];
+
+                                    ?>
+
+
+                                    <button value="<?php echo $product[0].','.$product[1].','.$product[2]?>" class="col-md-2 tsk" style="background-color:white;border:1px solid gray;margin-top:8px;margin-right:8px;" id="product">
+                                        <img src="<?="10.10.168.100/$image"?>" alt="<?=$row['name']?>"  width="50px;">
+                                        <small class="text-info"><?=$row['name']?></small><br>(<small><?=$row['item_quantity']?> ml</small>)
+                                        <br>
+
+                                        <small><?=$row['code']?></small>
+                                    </button>
+                                <?php
+                                }
+
+                            ?>
                         </div>
                     </div>
                 </div>
