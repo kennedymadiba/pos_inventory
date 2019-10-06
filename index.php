@@ -57,10 +57,12 @@
                         <tr>
                             <th>Products count ( 0 )</th>
                             <th></th>
+                            <th></th>
                             <th>Sub Total</th>
                             <th>0 ksh</th>
                         </tr>
                         <tr>
+                            <th></th>
                             <th></th>
                             <th></th>
                             <th>Discount</th>
@@ -69,10 +71,12 @@
                         <tr>
                             <th></th>
                             <th></th>
+                            <th></th>
                             <th>Shipping</th>
                             <th>0 ksh</th>
                         </tr>
                         <tr style="background:#DFF0D8;">
+                            <th></th>
                             <th></th>
                             <th></th>
                             <th>Net payable</th>
