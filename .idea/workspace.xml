@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="90f6d180-bcdc-4972-98c1-0a64d14a4e89" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/index.php" afterPath="$PROJECT_DIR$/index.php" />
-      <change beforePath="$PROJECT_DIR$/pos.php" afterPath="$PROJECT_DIR$/pos.php" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/shop.php" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -15,11 +13,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="index.php" pinned="false" current-in-tab="true">
+      <file leaf-file-name="index.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/index.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="486">
-              <caret line="80" column="37" lean-forward="false" selection-start-line="80" selection-start-column="37" selection-end-line="80" selection-end-column="37" />
+            <state relative-caret-position="163">
+              <caret line="61" column="42" lean-forward="true" selection-start-line="61" selection-start-column="42" selection-end-line="61" selection-end-column="42" />
               <folding>
                 <element signature="n#style#0;n#body#0;n#html#0;n#!!top" expanded="true" />
                 <element signature="n#STYLE#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
@@ -29,6 +27,16 @@
                 <marker date="1570346278948" expanded="true" signature="4688:4725" ph="SELECT name,... category" />
                 <marker date="1570346278948" expanded="true" signature="5303:5341" ph="SELECT * FRO... product" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="shop.php" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/shop.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="102">
+              <caret line="6" column="3" lean-forward="true" selection-start-line="6" selection-start-column="3" selection-end-line="6" selection-end-column="3" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -116,17 +124,6 @@
               <item name="pos_inventory" type="b2602c69:ProjectViewProjectNode" />
               <item name="pos_inventory" type="2a2b976b:PhpTreeStructureProvider$1" />
             </path>
-            <path>
-              <item name="pos_inventory" type="b2602c69:ProjectViewProjectNode" />
-              <item name="pos_inventory" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="10.10.168.100" type="2a2b976b:PhpTreeStructureProvider$1" />
-            </path>
-            <path>
-              <item name="pos_inventory" type="b2602c69:ProjectViewProjectNode" />
-              <item name="pos_inventory" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="10.10.168.100" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="includes" type="2a2b976b:PhpTreeStructureProvider$1" />
-            </path>
           </expand>
           <select />
         </subPane>
@@ -163,12 +160,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1570310262345</updated>
-      <workItem from="1570310264661" duration="18257000" />
+      <workItem from="1570310264661" duration="18883000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="18257000" />
+    <option name="totallyTimeSpent" value="18883000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
@@ -231,8 +228,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/index.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="486">
-          <caret line="80" column="37" lean-forward="false" selection-start-line="80" selection-start-column="37" selection-end-line="80" selection-end-column="37" />
+        <state relative-caret-position="163">
+          <caret line="61" column="42" lean-forward="true" selection-start-line="61" selection-start-column="42" selection-end-line="61" selection-end-column="42" />
           <folding>
             <element signature="n#style#0;n#body#0;n#html#0;n#!!top" expanded="true" />
             <element signature="n#STYLE#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
@@ -242,6 +239,14 @@
             <marker date="1570346278948" expanded="true" signature="4688:4725" ph="SELECT name,... category" />
             <marker date="1570346278948" expanded="true" signature="5303:5341" ph="SELECT * FRO... product" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shop.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="6" column="3" lean-forward="true" selection-start-line="6" selection-start-column="3" selection-end-line="6" selection-end-column="3" />
+          <folding />
         </state>
       </provider>
     </entry>
