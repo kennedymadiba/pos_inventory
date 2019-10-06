@@ -21,7 +21,7 @@ if(!isset($_SESSION['admin_id']))
 </head>
 <body>
 <?php include('plugins/nav.php');?>
-<div class="container mt-5">
+<div class="container-fluid mt-5">
  
  <div class="card">
  	<div class="card-header">
