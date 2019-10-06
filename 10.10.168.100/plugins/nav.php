@@ -23,7 +23,7 @@
         <a class="nav-link" href="#">Sales Report</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#">Manage Users</a>
+        <a class="nav-link" href="users.php">Manage Users</a>
       </li>
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
