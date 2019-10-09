@@ -20,20 +20,152 @@
 
     <title>Hello, world!</title>
     <script>
+    // $(document).on('click', ".product", function () {
+        //    $.get("shop.php",function(data){
+        //            $(".items").html(data);
+        //        });
+        //     });
+        
+
         $(document).ready(function(){
 
-            $("button").click(function(){
+            setInterval(function(){
+                $.get("shop.php",function(data){
+                   $(".items").html(data);
+               });
+            
+            }, 1000);
+                      
+            var barcode=[];
+            var quantity=[];
+            var name=[];
+            var price=[];
+            var countlicks=0;
+            $(document).on('click', ".product", function () {
+                
+                countlicks=countlicks+1;
                 var product=$(this).val();
-                $.post("pos.php",{product:product},function(data){
-                    // if(jQuery.inArray(product, cart)==0){
-                        $("tbody").append(data);
+                var split=product.split(",");
+
+                if(countlicks<=split[2]){
+                
+                //check amount of product selected remaining;
+                $.post("checkIfExistInDb.php",{code:split[0]},function(data){
+                    
+                if(data>0){
+                    //reduce inventory on click
+                $.post("dbToCart.php",{reduceInventory:split[0]},function(data){
+                    //refresh page
+                      $.get("shop.php",function(data){
+                           $(".items").html(data);
+                      }); 
+                     //refresh page end 
+                 });   
+                }
                 });
+                
+                if (barcode.length == 0) {
+                    barcode.push(split[0]);
+                    name.push(split[1]);
+                    price.push(split[2]);
+                    quantity.push(1);
+                                      
+                    
+                 }else{
+                     if(barcode.includes(split[0])){
+                        var count=barcode.length;
+                        
+                        var i=0;
+                        while(i<count){
+                            if(barcode[i]===split[0]){
+                            quantity[i]=parseInt(quantity[i], 10)+1;
+                            }
+                            i++;
+                        }
+                     }else{
+                        barcode.push(split[0]);
+                        name.push(split[1]);
+                        price.push(split[2]);
+                        quantity.push(1);}
+                     }
+                    
+            //          $.get("shop.php",function(data){
+            //     $(".items").html(data);
+            // }); 
+               
+               
+            
+
+                 $.post("cart.php",{barcodeArray:barcode,nameArray:name,priceArray:price,quantityArray:quantity},function(data){
+                    
+                   $("table").html(data);
+                   });
+
+                 
+                }
+           
             });
+
+                         
+              
+
+           
+            $(document).on('click', "#removeItem", function () {
+                var remove=$(this).val();
+                var ProductDetail=remove.split(".");
+                
+                $.post("returnToDb.php",{barcode:ProductDetail[0],quantity:ProductDetail[1]},function(){
+                    
+                    $('#'+ProductDetail[0]).remove(); 
+                    
+                    if(barcode.includes(ProductDetail[0])){
+                        var existingArrayCount= barcode.length;
+                        var j=0;
+
+                        while(j<existingArrayCount){
+                            if(barcode[j]===ProductDetail[0]){
+                                barcode.splice(j,1);
+                                price.splice(j,1);
+                                name.splice(j,1);
+                                quantity.splice(j,1);
+                            }
+                            j++;
+                        }
+                        //refresh cart after deleting
+                        $.post("cart.php",{barcodeArray:barcode,nameArray:name,priceArray:price,quantityArray:quantity},function(data){
+                    
+                            $("table").html(data);
+
+                   //after removing from cart we must return data to inventory and refresh         
+                    $.get("shop.php",function(data){
+                    $(".items").html(data);
+                    });
+                    //after removing from cart we must return data to inventory and refresh end
+
+                   });
+                    }
+                    
+                });
         });
+
+
+            
+        
+    });
+
+        // $(document).on('click', ".product", function () {
+               
+        //     $.get("shop.php",function(data){
+        //         $(".items").html(data);
+        //     });
+        // });
+    
+    
+        
 
     </script>
 </head>
-<body style="background: #F1F3F4;">
+<body style="background: #F1F3F4;" >
 
 <div class="container-fluid" STYLE="margin-top:10px;">
     <div class="row">
@@ -48,34 +180,25 @@
                             <td width="120" class="text-center hidden-xs">Unit Price</td>
                             <td width="100" class="text-center">Quantity</td>
                             <td width="100" class="text-right">Total Price</td>
+                            <td>Delete</td>
                         </tr>
                         </thead>
                         <tbody>
 
                         </tbody>
+                        
                         <tfoot>
                         <tr>
                             <th>Products count ( 0 )</th>
                             <th></th>
                             <th></th>
+                            <th></th>
                             <th>Sub Total</th>
                             <th>0 ksh</th>
                         </tr>
-                        <tr>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th>Discount</th>
-                            <th>0 ksh</th>
-                        </tr>
-                        <tr>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                            <th>Shipping</th>
-                            <th>0 ksh</th>
-                        </tr>
+                        
                         <tr style="background:#DFF0D8;">
+                            <th></th>
                             <th></th>
                             <th></th>
                             <th></th>
@@ -100,43 +223,26 @@
                                         <div class="input-group-text"><span class="fa fa-search"></span></div>
                                         <div class="input-group-text"><span class="fa fa-barcode"></span></div>
                                     </div>
-                                    <input type="text" class="form-control col-12" id="inlineFormInputGroup" placeholder="Barcode, product name, code" >
+                                    <input  type="text" class="form-control col-12" id="inlineFormInputGroup" placeholder="Barcode, product name, code" >
                                 </div>
                             </div>
                         </div>
                     </form>
                     <div class="container">
-                        <div class="row">
-
-                            <div>
-                                <button class="btn btn-primary btn-sm">All</button>
-                                <?php
-                                $sql = "SELECT name,category_id FROM category";
-                                $exe = $connect->query($sql);
-                                while($row = $exe->fetch_assoc()) {
-
-                                    $id = $row['category_id'];
-                                    ?>
-                                    <button class="btn btn-default btn-sm" value="<?=$id?>"><?=$row['name']?></button>
-
-                                    <?php
-
-                                }
-
-                                ?>
-                            </div>
+                        <div class="row items">
+                            <!-- <div class="items"> -->
                             <?php
                                 $sql = "SELECT * FROM product WHERE quantity>0";
                                 $exe = $connect->query($sql);
                                 while($row = $exe->fetch_assoc())
                                 {
-                                    $product = array($row['code'],$row['name'],$row['sp']);
+                                    $product = array($row['code'],$row['name'],$row['sp'],$row['quantity']);
                                     $image = $row['image'];
 
                                     ?>
 
 
-                                    <button value="<?php echo $product[0].','.$product[1].','.$product[2]?>" class="col-md-2 tsk" style="background-color:white;border:1px solid gray;margin-top:8px;margin-right:8px;" id="product">
+                                    <button value="<?php echo $product[0].','.$product[1].','.$product[2].','.$product[3]?>" class="col-md-2 product" style="background-color:white;border:1px solid gray;margin-top:8px;margin-right:8px;" id="product">
                                         <img src="<?="10.10.168.100/$image"?>" alt="<?=$row['name']?>"  width="50px;">
                                         <small class="text-info"><?=$row['name']?></small><br>(<small><?=$row['item_quantity']?> ml</small>)
                                         <br>
@@ -147,6 +253,7 @@
                                 }
 
                             ?>
+                            <!-- </div> -->
                         </div>
                     </div>
                 </div>
