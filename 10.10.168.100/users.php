@@ -4,27 +4,11 @@ session_start();
 if(!isset($_SESSION['admin_id']))
 {
 	header('location:login.php');
-}else{
-	include('productAction.php');
-	include('includes/db_connect.php');
-  date_default_timezone_set('Africa/Nairobi');
-
-  if(isset($_POST['add_stock']))
-  {
-    $product = $_POST['product'];
-    $quantity = $_POST['quantity'];
-    $ex_date = $_POST['ex_date'];
-    $supplier = $_POST['supplier'];
-
-    $date_arrival = date("Y-m-d H:i:s");
-    $data = array("code"=>$product,"date_arrival"=>$date_arrival,"ex_date"=>$ex_date,"quantity"=>$quantity,"supplier"=>$supplier);
-    if($db->insert('stock',$data))
-    {
-      $up = $connect->query("UPDATE product SET quantity=quantity+'$quantity' WHERE code='$product'");
-      $_SESSION['response']=$quantity." of stock added successfully";
-      $_SESSION['res_type']="success";
-    }
-  }
+}
+else
+{
+  include('includes/db_connect.php');
+  include('usersAction.php');
 }
 ?>
 <!DOCTYPE html>
@@ -39,17 +23,16 @@ if(!isset($_SESSION['admin_id']))
 </head>
 <body>
 <?php include('plugins/nav.php');?>
-<div class="container-fluid mt-5">
+<div class="container mt-5">
  
- <div class="card">
+  <div class="card">
  	<div class="card-header">
      <div class="row">
  			<div class="col-md-9">
  				Products
  			</div>
  			<div class="col-md-3">
- 				<button type="button" id="btn_add" data-toggle="modal" data-target="#addModal" class="btn btn-info btn-sm ml-1" style="float: right;">Add Product</button>
-        <button type="button" id="btn_update" data-toggle="modal" data-target="#updateModal" class="btn btn-info btn-sm" style="float: right;">Update Stock</button>
+ 				<button type="button" id="btn_add" data-toggle="modal" data-target="#addModal" class="btn btn-info btn-sm" style="float: right;">Add User</button>
  			</div>
  	 </div>
  	</div>
@@ -61,18 +44,11 @@ if(!isset($_SESSION['admin_id']))
 	    </div>
      <?php } unset($_SESSION['response']); ?>
    	<div class="table-responsive">
-       <table class="table table-hover" id="tbl_products">
+       <table class="table table-hover" id="tbl_users">
           <thead>
           	<tr>
           	 <th>Image</th>
-          	 <th>Item Code</th>
           	 <th>Name</th>
-          	 <th>Item quantity(ML)</th>
-          	 <th>Category</th>
-          	 <th>B.P(ksh)</th>
-          	 <th>S.P(ksh)</th>
-          	 <th>Profit(ksh)</th>
-          	 <th>Quantity</th>
           	 <th>View</th>
           	 <th>Edit</th>
           	 <th>Delete</th>
@@ -80,27 +56,14 @@ if(!isset($_SESSION['admin_id']))
           </thead>
           <tbody>
           	<?php
-             $products = $db->get('product');
-             foreach ($products as $row) 
+             $users = $db->get('users');
+             foreach ($users as $row) 
              {
              	$id = $row['id'];
-              $cat_id=$row['category_id'];
-              // fetch category
-              $sql = "SELECT name FROM category WHERE category_id='$cat_id'";
-              $res = $connect->query($sql);
-              $ans = $res->fetch_assoc();
-              $category = $ans['name'];
              ?>
              <tr>
-             	<td><img src="<?=$row['image']?>" width="50"></td>
-             	<td><?=$row['code']?></td>
+             	<td><img src="<?=$row['image']?>" width="100"></td>
              	<td><?=$row['name']?></td>
-              <td><?=$row['item_quantity']?></td>
-             	<td><?=$category?></td>
-             	<td><?=$row['bp']?></td>
-             	<td><?=$row['sp']?></td>
-             	<td><?=$row['sp']-$row['bp']?></td>
-             	<td><?=$row['quantity']?></td>
              	<td><button type="button" data-toggle="modal" data-target="#view<?=$id?>" class="btn btn-info btn-sm">View</button></td>
              	<td><button type="button" data-toggle="modal" data-target="#edit<?=$id?>" class="btn btn-primary btn-sm">Edit</button></td>
              	<td><button type="button" data-toggle="modal" data-target="#delete<?=$id?>" class="btn btn-danger btn-sm">Delete</button></td>
@@ -219,14 +182,13 @@ if(!isset($_SESSION['admin_id']))
    </div>
  </div>
 
-</div>
-<!-- add product -->
+ <!-- add user  -->
 <div class="modal" id="addModal"  tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
   	<form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" enctype="multipart/form-data">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="modal_title">Add New Product</h5>
+        <h5 class="modal-title" id="modal_title">Add New User</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -234,81 +196,20 @@ if(!isset($_SESSION['admin_id']))
       <div class="modal-body">
         <div class="form-group">
         	<div class="row">
-        		<label class="col-md-4 text-right">Item Code
-                <span class="text-danger">*</span></label>
-                <div class="col-md-8">
-                	<input type="text" name="code" id="code" class="form-control" required>
-                	<span class="text-danger"></span>
-                </div>
-        	</div>	
-        </div>
-        <div class="form-group">
-        	<div class="row">
         		<label class="col-md-4 text-right">Name
                 <span class="text-danger">*</span></label>
                 <div class="col-md-8">
                 	<input type="text" name="name" id="name" class="form-control" required>
-                	<!-- <span class="text-danger" id="error_class_name"><?=$error_email?></span> -->
                 	<span class="text-danger"></span>
                 </div>
         	</div>	
         </div>
         <div class="form-group">
         	<div class="row">
-        		<label class="col-md-4 text-right">Item Quantity(ML)
+        		<label class="col-md-4 text-right">Username
                 <span class="text-danger">*</span></label>
                 <div class="col-md-8">
-                	<input type="number" name="item_quantity" id="item_quantity" class="form-control" required>
-                	<span class="text-danger"></span>
-                </div>
-        	</div>	
-        </div>
-        <div class="form-group">
-        	<div class="row">
-        		<label class="col-md-4 text-right">Select Category
-                <span class="text-danger">*</span></label>
-                <div class="col-md-8">
-                	<select class="form-control" id="exampleFormControlSelect1" name="category" required>
-                	  <option selected disabled="disabled">select</option>
-				      <?php
-                       $cats = $db->get('category');
-                       foreach ($cats as $row)
-                        {
-                       	?>
-                       	<option value="<?=$row['category_id']?>"><?=$row['name']?></option>
-                       	<?php
-                       }
-				      ?>
-				    </select>
-                </div>
-        	</div>	
-        </div>
-        <div class="form-group">
-        	<div class="row">
-        		<label class="col-md-4 text-right">B.P
-                <span class="text-danger">*</span></label>
-                <div class="col-md-8">
-                	<input type="number" name="bp" id="bp" class="form-control" required>
-                	<span class="text-danger"></span>
-                </div>
-        	</div>	
-        </div>
-        <div class="form-group">
-        	<div class="row">
-        		<label class="col-md-4 text-right">S.P
-                <span class="text-danger">*</span></label>
-                <div class="col-md-8">
-                	<input type="number" name="sp" id="sp" class="form-control" required>
-                	<span class="text-danger"></span>
-                </div>
-        	</div>	
-        </div>
-        <div class="form-group">
-        	<div class="row">
-        		<label class="col-md-4 text-right">Quantity
-                <span class="text-danger">*</span></label>
-                <div class="col-md-8">
-                	<input type="number" name="quantity" id="quantity" class="form-control" required>
+                	<input type="text" name="username" id="username" class="form-control" required>
                 	<span class="text-danger"></span>
                 </div>
         	</div>	
@@ -331,129 +232,37 @@ if(!isset($_SESSION['admin_id']))
      </form>
   </div>
 </div>
-<!-- update stock	 -->
-<div class="modal" id="updateModal"  tabindex="-1" role="dialog">
-  <div class="modal-dialog" role="document">
-    <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" enctype="multipart/form-data">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="modal_title">Add stock</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="form-group">
-          <div class="row">
-            <label class="col-md-4 text-right">Select Category
-                <span class="text-danger">*</span></label>
-                <div class="col-md-8">
-                  <select class="form-control" id="selectc" name="category" required onChange='change_category()'>
-                    <option selected disabled="disabled">select</option>
-                    <?php
-                       $cats = $db->get('category');
-                       foreach ($cats as $row)
-                        {
-                        ?>
-                        <option value="<?=$row['category_id']?>"><?=$row['name']?></option>
-                        <?php
-                       }
-                    ?>
-                  </select>
-                </div>
-          </div>  
-        </div>
-        <div class="form-group">
-          <div class="row">
-            <label class="col-md-4 text-right">Select Product
-                <span class="text-danger">*</span></label>
-                <div class="col-md-8" id="product">
-                  <select name="product" id="select2" class="form-control">
-                   <option value="">select product</option>
-                  </select>
-                </div>
-          </div>  
-        </div>
-        <div class="form-group">
-          <div class="row">
-            <label class="col-md-4 text-right">Quantity
-                <span class="text-danger">*</span></label>
-                <div class="col-md-8">
-                  <input type="number" name="quantity" id="quantity" class="form-control" required>
-                  <span class="text-danger"></span>
-                </div>
-          </div>  
-        </div>
-        <div class="form-group">
-          <div class="row">
-            <label class="col-md-4 text-right">Expiry Date(Optional)
-            </label>
-                <div class="col-md-8">
-                  <input type="date" name="ex_date" id="ex_date" class="form-control">
-                  <span class="text-danger"></span>
-                </div>
-          </div>  
-        </div>
-        <div class="form-group">
-          <div class="row">
-            <label class="col-md-4 text-right">Supplier(Optional)
-            </label>
-            <div class="col-md-8">
-              <input type="text" name="supplier" id="supplier" class="form-control">
-              <span class="text-danger"></span>
-            </div>
-          </div>  
-        </div>
-      </div>
-      <div class="modal-footer">
-        <input type="submit" name="add_stock" id="add_stock" class="btn btn-success btn-sm" value="Add">
-        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-     </form>
-  </div>
+ 
 </div>
-
-
-  <!-- custom scripts -->
-   <script type="text/javascript">
-          function change_category(){
-              var xmlhttp=new XMLHttpRequest();
-              xmlhttp.open("GET","ajaxx.php?category="+document.getElementById("selectc").value , false);
-        xmlhttp.send(null);
-    
-              document.getElementById("product").innerHTML=xmlhttp.responseText;
-          }
-    </script>
 
 <?php include('plugins/js.php');?>
 </body>
 </html>
 <script type="text/javascript">
  $('document').ready(function(){
- $('#tbl_products').DataTable();
+ $('#tbl_users').DataTable();
 
  var state = false;
- $('#code').on('blur', function(){
-  var code = $('#code').val();
-  if (code == '') {
+ $('#username').on('blur', function(){
+  var username = $('#username').val();
+  if (username == '') {
   	state = false;
   	return;
   }
   $.ajax({
-    url: 'productAction.php',
+    url: 'usersAction.php',
     type: 'post',
     data: {
-    	'code_check' : 1,
-    	'code' : code,
+    	'username_check' : 1,
+    	'username' : username,
     },
     success: function(response){
       if (response == 'exist' ) {
       	state = false;
-      	$('#code').siblings("span").text('Item Code exist, should be unique!');
+      	$('#username').siblings("span").text('Username is taken!');
       }else if (response == 'not_exist') {
       	state = true;
-      	$('#code').siblings("span").text('');
+      	$('#username').siblings("span").text('');
       }
     }
   });

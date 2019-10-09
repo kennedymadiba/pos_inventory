@@ -12,7 +12,7 @@ if(isset($_POST['btn_action']))
 	$quantity = $_POST['quantity'];
 
 	$photo = $_FILES['image']['name'];
-    $upload = "images/".$photo;
+  $upload = "images/".$photo;
 
     $db->where ('code', $code);
   	$db->where ('category_id', $category);
