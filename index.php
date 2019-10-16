@@ -1,5 +1,44 @@
 <?php
+session_start();
+
   include_once '10.10.168.100/includes/db_connect.php';
+  include_once 'fpdf/fpdf.php';
+
+
+  //get latest trans id
+    $sql = "SELECT transaction_id FROM transaction ORDER BY id DESC LIMIT 1";
+    $exe = $connect->query($sql);
+    if(mysqli_num_rows($exe)>0)
+    {
+        while($row = $exe->fetch_assoc())
+        {
+            $trans_id = $row['transaction_id']+1;
+        }
+    }
+    else{
+        $trans_id = 1;
+    }
+
+
+
+
+  if(isset($_POST['transaction']))
+  {
+      $code = $_SESSION['barray'];
+      $price = $_SESSION['parray'];
+      $qty = $_SESSION['qarray'];
+      $time = date("d-M-Y");
+
+
+      $i=0;
+
+      while($i<count($code)){
+
+          $sql ="INSERT INTO transaction(code,qty,price,transaction_id,time) VALUES ('$code[$i]','$qty[$i]','$price[$i]','$trans_id','$time')";
+          $exe = $connect->query($sql);
+          $i++;
+      }
+  }
 
 ?>
 <!doctype html>
@@ -17,6 +56,8 @@
     <!-- Material Design Bootstrap -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.10/css/mdb.min.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://printjs-4de6.kxcdn.com/print.min.js"></script>
+    <link rel="stylesheet" href="https://printjs-4de6.kxcdn.com/print.min.css">
 
     <title>Hello, world!</title>
     <script>
@@ -25,9 +66,11 @@
         //            $(".items").html(data);
         //        });
         //     });
-        
+
 
         $(document).ready(function(){
+
+
 
             setInterval(function(){
                 $.get("shop.php",function(data){
@@ -98,9 +141,14 @@
 
                  $.post("cart.php",{barcodeArray:barcode,nameArray:name,priceArray:price,quantityArray:quantity},function(data){
                     
-                   $("table").html(data);
+                   $(".table-cart").html(data);
                    });
 
+
+                    $.post("receipt.php",{barcodeArray:barcode,nameArray:name,priceArray:price,quantityArray:quantity},function(data){
+
+                        $(".receipt").html(data);
+                    });
                  
                 }
            
@@ -134,7 +182,13 @@
                         //refresh cart after deleting
                         $.post("cart.php",{barcodeArray:barcode,nameArray:name,priceArray:price,quantityArray:quantity},function(data){
                     
-                            $("table").html(data);
+                            $(".table-cart").html(data);
+
+                        $.post("receipt.php",{barcodeArray:barcode,nameArray:name,priceArray:price,quantityArray:quantity},function(data){
+
+                            $(".receipt").html(data);
+
+                        });
 
                    //after removing from cart we must return data to inventory and refresh         
                     $.get("shop.php",function(data){
@@ -171,16 +225,16 @@
     <div class="row">
         <div class="col-md-6">
             <div class="card">
-                <div class="card-body">
-                    <table class="table" id="cart-item-table-header">
+                <div class="card-body table-cart">
+                    <table class="table table-cart" id="cart-item-table-header table">
                         <thead>
                         <tr class="active">
-                            <td width="100" class="text-right"> Barcode</td>
-                            <td width="200" class="text-left">Items</td>
-                            <td width="120" class="text-center hidden-xs">Unit Price</td>
-                            <td width="100" class="text-center">Quantity</td>
-                            <td width="100" class="text-right">Total Price</td>
-                            <td>Delete</td>
+                            <th width="100" class="text-right"> Barcode</th>
+                            <th width="200" class="text-left">Items</th>
+                            <th width="120" class="text-center hidden-xs">Unit Price</th>
+                            <th width="100" class="text-center">Quantity</th>
+                            <th width="100" class="text-right">Total Price</th>
+                            <th>Delete</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -260,6 +314,50 @@
             </div>
         </div>
     </div>
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Confirm purchase</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" action="#" id="printJS-form">
+                        <p>Invoice : #<?=$trans_id?> </p>
+                        <br>
+                        <table class="table receipt">
+                          <thead>
+                          <tr>
+                              <th>Item</th>
+                              <th>Unit price</th>
+                              <th>Qty</th>
+                              <th>Total</th>
+                          </tr>
+                          </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                    </form>
+
+                    <button type="button" onclick="printJS('printJS-form', 'html')" class="btn btn-default btn-sm">
+                        Print
+                    </button>
+                </div>
+                <div class="modal-footer">
+                    <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'])?>" method="post">
+                        <button class="btn btn-success btn-sm" type="submit" name="transaction">
+                            Save transaction
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--    end modal-->
 </div>
 
 

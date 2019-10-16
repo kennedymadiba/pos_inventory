@@ -19,18 +19,20 @@ $count=count($barcodeArray);
 $i=0;
 
 
-
-echo "<tbody>";
+echo "<table class='table' id='cart-item-table-header table'>";
 echo "<thead>
 <tr>
-    <td> Barcode</td>
-    <td>Items</td>
-    <td>Unit Price</td>
-    <td>Quantity</td>
-    <td>Total Price</td>
-    <td>Delete</td>
+    <th>Barcode</th>
+    <th>Items</th>
+    <th>Unit Price</th>
+    <th>Quantity</th>
+    <th>Total Price</th>
+    <th>Delete</th>
 </tr>
 </thead>";
+
+echo "<tbody>";
+
 
 $subtotal = array();
 
@@ -74,7 +76,18 @@ echo "<tfoot>
     <th>".array_sum($subtotal)." ksh</th>
 </tr>
 
-</tfoot>";
+
+</tfoot>
+</table>
+<div class='alert alert-warning'>
+<button type=\"button\" class=\"btn btn-success\" data-toggle=\"modal\" data-target=\"#exampleModal\">
+  CONFIRM
+</button>
+<button class='btn btn-danger'>CANCEL</button>
+</div>
+
+";
+
 
 
 ?>
