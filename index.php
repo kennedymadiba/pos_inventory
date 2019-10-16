@@ -2,7 +2,6 @@
 session_start();
 
   include_once '10.10.168.100/includes/db_connect.php';
-  include_once 'fpdf/fpdf.php';
 
 
   //get latest trans id
