@@ -73,7 +73,7 @@ else
 			  <div class="modal-dialog" role="document">
 			    <div class="modal-content bg-info rounded">
 			      <div class="modal-header">
-			        <h5 class="modal-title text-light" id="exampleModalLabel">Teacher Id: <?=$row['id']?></h5>
+			        <h5 class="modal-title text-light" id="exampleModalLabel">Users Profile</h5>
 			        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
 			          <span aria-hidden="true">&times;</span>
 			        </button>
@@ -82,8 +82,8 @@ else
 			        <div class="text-center">
 						<img src="<?=$row['image']?>" width="250" class="img-thumbnail">
 					</div>
-					<h5 class="text-light">NAME: <?=$row['name']?></h5>
-					<h5 class="text-light">EMAIL: <?=$row['email']?></h5>
+					<h5 class="text-light">Name: <?=$row['name']?></h5>
+					<h5 class="text-light">Username: <?=$row['username']?></h5>
 			      </div>
 			    </div>
 			  </div>
@@ -95,7 +95,7 @@ else
 			  	<form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" enctype="multipart/form-data">
 			    <div class="modal-content">
 			      <div class="modal-header">
-			        <h5 class="modal-title" id="modal_title">Edit Teacher</h5>
+			        <h5 class="modal-title" id="modal_title">Edit User</h5>
 			        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
 			          <span aria-hidden="true">&times;</span>
 			        </button>
@@ -108,23 +108,15 @@ else
 			        	<div class="row">
 			        		<label class="col-md-4 text-right">Name</label>
 			                <div class="col-md-8">
-			                	<input type="text" name="name" value="<?=$row['name']?>" id="name" class="form-control">
+			                	<input type="text" name="updatename" value="<?=$row['name']?>" id="updatename" class="form-control">
 			                </div>
 			        	</div>	
 			        </div>
 			        <div class="form-group">
 			        	<div class="row">
-			        		<label class="col-md-4 text-right">Email</label>
+			        		<label class="col-md-4 text-right">Username</label>
 			                <div class="col-md-8">
-			                	<input type="email" name="email" value="<?=$row['email']?>" id="email1" class="form-control">
-			                </div>
-			        	</div>	
-			        </div>
-			        <div class="form-group">
-			        	<div class="row">
-			        		<label class="col-md-4 text-right">Teacher Id</label>
-			                <div class="col-md-8">
-			                	<input type="text" value="<?=$row['teacher_id']?>" class="form-control" disabled>
+			                	<input type="text" name="updateusername" value="<?=$row['username']?>" id="updateusername" class="form-control">
 			                </div>
 			        	</div>	
 			        </div>

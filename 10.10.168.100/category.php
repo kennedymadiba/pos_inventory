@@ -7,6 +7,32 @@ if(!isset($_SESSION['admin_id']))
 }else{
 	include('catAction.php');
 	include('includes/db_connect.php');
+
+  if(isset($_POST['btn_edit']))
+  {
+    $key = $_POST['editkey'];
+    $editname = $_POST['editcat'];
+    
+    $data=array('name'=>$editname);
+    $db->where ('category_id', $key);
+    if ($db->update ('category', $data)){
+      $_SESSION['response']="Successfully edited";
+      $_SESSION['res_type']="success";
+    }else{
+      $_SESSION['response']="Something went wrong! try again";
+      $_SESSION['res_type']="danger";
+    }
+  }
+
+  if(isset($_POST['btn_delete']))
+  {
+    $deletekey = $_POST['deletekey'];
+    $db->where('category_id', $deletekey);
+    if($db->delete('category')){
+      $_SESSION['response']="Successfully deleted";
+      $_SESSION['res_type']="danger";
+    } 
+  }
 }
 ?>
 <!DOCTYPE html>
@@ -52,21 +78,80 @@ if(!isset($_SESSION['admin_id']))
 	         </thead>
 	         <tbody>
 	         <?php
-              $categories = $db->get('category');
+             $categories = $db->get('category');
              foreach ($categories as $row) 
              {
              	$id = $row['category_id'];
 	         ?>
-              <tr>
+          <tr>
 			  	 <td><?=$row['name']?></td>
 			  	 <td>
-		         <a href="details.php?details=<?=rand ( 10000 , 99999 ).$row['id']?>"><button type="button" class="btn btn-primary btn-sm">Details</button></a> |
-		         <a href="action.php?deleterecord=<?=$row['id']?>" onclick="return confirm('Confirm deleting this record');"><button type="button" class="btn btn-danger btn-sm">Delete</button></a> |
-		         <a href="index.php?edit=<?=rand ( 10000 , 99999 ).$row['id']?>"><button type="button" class="btn btn-success btn-sm">Edit</button></a>
+		         <a href="#delete<?=$id?>" data-toggle="modal"><button type="button" class="btn btn-danger btn-sm">Delete</button></a> |
+		         <a href="#edit<?=$id?>" data-toggle="modal"><button type="button" class="btn btn-success btn-sm">Edit</button></a>
 		        </td>
 			  	</tr>
+          
+          <!-- edit modal -->
+           <div class="modal" id="edit<?=$id?>">
+            <div class="modal-dialog" role="document">
+              <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" id="edit_form">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="modal_title">Edit</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <div class="form-group">
+                    <div class="row">
+                      <label class="col-md-4 text-right">Category Name</label>
+                          <div class="col-md-8">
+                            <input type="hidden" name="editkey" class="form-control" value="<?=$id?>">
+                            <input type="text" name="editcat" id="editcat" class="form-control" value="<?=$row['name']?>">
+                          </div>
+                    </div>  
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <input type="submit" name="btn_edit" id="btn_edit" class="btn btn-success btn-sm" value="Edit">
+                  <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                </div>
+              </div>
+               </form>
+            </div>
+          </div>
+          <!-- // edit modal -->
+          <!-- delete modal -->
+          <div class="modal" id="delete<?=$id?>">
+            <div class="modal-dialog" role="document">
+              <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" id="delete_form">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="modal_title">Delete</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <div class="form-group">
+                      <input type="hidden" name="deletekey" class="form-control" value="<?=$id?>">
+                  </div>
+                  <div class="alert alert-danger" role="alert">
+                    Confirm deleting <b><?=$row['name']?></b> ?
+                  </div>  
+                </div>
+                <div class="modal-footer">
+                  <input type="submit" name="btn_delete" id="btn_delete" class="btn btn-success btn-sm" value="Delete">
+                  <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                </div>
+              </div>
+               </form>
+            </div>
+          </div>
+          <!-- // delete modal -->
 			  	<?php
-                 }
+          }
 			  	?>
 	         </tbody>
  			</table>
@@ -81,7 +166,7 @@ if(!isset($_SESSION['admin_id']))
     <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" id="student_form">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="modal_title"></h5>
+        <h5 class="modal-title" id="modal_title">Add Category</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -97,13 +182,14 @@ if(!isset($_SESSION['admin_id']))
                 </div>
           </div>  
         </div>
+      </div>
       <div class="modal-footer">
         <input type="hidden" name="student_id" id="student_id">
         <input type="hidden" name="action" id="action" value="Add">
         <input type="submit" name="btn_action" id="btn_action" class="btn btn-success btn-sm" value="Add">
         <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
       </div>
-    </div>
+  </div>
      </form>
   </div>
 </div>

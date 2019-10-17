@@ -45,4 +45,48 @@ if (isset($_POST['username_check'])) {
   	}
   	exit();
   }
+
+
+  if(isset($_POST['btn_update']))
+  {
+    $updatekey = $_POST['key'];
+    $updatename = $_POST['updatename'];
+    $updateusername = $_POST['updateusername'];
+    $oldimage = $_POST['oldimage'];
+    
+    if(isset($_FILES['image']['name']) && $_FILES['image']['name']!=""){
+      $newimage = $_FILES['image']['name'];
+      $upload = "userImages/".$newimage;
+      unlink($oldimage);
+      move_uploaded_file($_FILES['image']['tmp_name'], $upload);
+    }else{
+      $upload=$oldimage;
+    }
+
+    $data = array("image"=>$upload,"name"=>$updatename,"username"=>$updateusername,"password"=>md5($updateusername));
+    $db->where ('id', $updatekey);
+    if ($db->update ('users', $data)){
+      $_SESSION['response']="Successfully edited";
+      $_SESSION['res_type']="success";
+    }else{
+      $_SESSION['response']="Something went wrong! try again";
+      $_SESSION['res_type']="danger";
+    }
+  }
+
+  if(isset($_POST['btn_delete']))
+  {
+    $deletekey = $_POST['key'];
+    $db->where ("id", $deletekey);
+    $user = $db->getOne ("users");
+    $img = $user['image'];
+
+    unlink($img);
+
+    $db->where ("id", $deletekey);
+    if($db->delete('users')){
+      $_SESSION['response']="Successfully deleted";
+      $_SESSION['res_type']="danger";
+    }
+  }
 ?>

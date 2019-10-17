@@ -18,7 +18,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.10/css/mdb.min.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
-    <title>Hello, world!</title>
+    <title>POS</title>
     <script>
     // $(document).on('click', ".product", function () {
         //    $.get("shop.php",function(data){

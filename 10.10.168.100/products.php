@@ -110,7 +110,7 @@ if(!isset($_SESSION['admin_id']))
 			  <div class="modal-dialog" role="document">
 			    <div class="modal-content bg-info rounded">
 			      <div class="modal-header">
-			        <h5 class="modal-title text-light" id="exampleModalLabel">Teacher Id: <?=$row['id']?></h5>
+			        <h5 class="modal-title text-light" id="exampleModalLabel">Product: <?=$row['name']."(".$row['item_quantity']."ml)"?></h5>
 			        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
 			          <span aria-hidden="true">&times;</span>
 			        </button>
@@ -119,8 +119,8 @@ if(!isset($_SESSION['admin_id']))
 			        <div class="text-center">
 						<img src="<?=$row['image']?>" width="250" class="img-thumbnail">
 					</div>
-					<h5 class="text-light">NAME: <?=$row['name']?></h5>
-					<h5 class="text-light">EMAIL: <?=$row['email']?></h5>
+					<h5 class="text-light">Code: <?=$row['code']?></h5>
+					<h5 class="text-light">Current Quantity: <?=$row['quantity']?></h5>
 			      </div>
 			    </div>
 			  </div>
@@ -132,7 +132,7 @@ if(!isset($_SESSION['admin_id']))
 			  	<form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" enctype="multipart/form-data">
 			    <div class="modal-content">
 			      <div class="modal-header">
-			        <h5 class="modal-title" id="modal_title">Edit Teacher</h5>
+			        <h5 class="modal-title" id="modal_title">Edit Product</h5>
 			        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
 			          <span aria-hidden="true">&times;</span>
 			        </button>
@@ -143,25 +143,17 @@ if(!isset($_SESSION['admin_id']))
 			      	</div>
 			        <div class="form-group">
 			        	<div class="row">
-			        		<label class="col-md-4 text-right">Name</label>
+			        		<label class="col-md-4 text-right">B.P</label>
 			                <div class="col-md-8">
-			                	<input type="text" name="name" value="<?=$row['name']?>" id="name" class="form-control">
+			                	<input type="number" name="updatebp" value="<?=$row['bp']?>" id="updatebp" class="form-control">
 			                </div>
 			        	</div>	
 			        </div>
 			        <div class="form-group">
 			        	<div class="row">
-			        		<label class="col-md-4 text-right">Email</label>
+			        		<label class="col-md-4 text-right">S.P</label>
 			                <div class="col-md-8">
-			                	<input type="email" name="email" value="<?=$row['email']?>" id="email1" class="form-control">
-			                </div>
-			        	</div>	
-			        </div>
-			        <div class="form-group">
-			        	<div class="row">
-			        		<label class="col-md-4 text-right">Teacher Id</label>
-			                <div class="col-md-8">
-			                	<input type="text" value="<?=$row['teacher_id']?>" class="form-control" disabled>
+			                	<input type="number" name="updatesp" value="<?=$row['sp']?>" id="updatesp" class="form-control">
 			                </div>
 			        	</div>	
 			        </div>
@@ -191,14 +183,14 @@ if(!isset($_SESSION['admin_id']))
                 <form method="POST" action="<?php echo htmlentities($_SERVER['PHP_SELF'])?>" id="add_class_form">
                 <div class="modal-content">
                   <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Delete Account</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Delete Product</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                       <span aria-hidden="true">&times;</span>
                     </button>
                   </div>
                   <div class="modal-body">
                     <div class="alert alert-danger" role="alert">
-                      Confirm deleting <?=$row['name']?>'s account ?
+                      Confirm deleting <?=$row['name']?> from inventory ?
                     </div>
                   </div>
                   <div class="modal-footer">
