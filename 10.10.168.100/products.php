@@ -12,15 +12,18 @@ if(!isset($_SESSION['admin_id']))
   if(isset($_POST['add_stock']))
   {
     $product = $_POST['product'];
+    $exploded_product = explode('|', $product);
+    $product_c = $exploded_product[0];
+    $product_q = $exploded_product[1];
     $quantity = $_POST['quantity'];
     $ex_date = $_POST['ex_date'];
     $supplier = $_POST['supplier'];
 
     $date_arrival = date("Y-m-d H:i:s");
-    $data = array("code"=>$product,"date_arrival"=>$date_arrival,"ex_date"=>$ex_date,"quantity"=>$quantity,"supplier"=>$supplier);
+    $data = array("code"=>$product_c,"item_quantity"=>$product_q,"date_arrival"=>$date_arrival,"ex_date"=>$ex_date,"quantity"=>$quantity,"supplier"=>$supplier);
     if($db->insert('stock',$data))
     {
-      $up = $connect->query("UPDATE product SET quantity=quantity+'$quantity' WHERE code='$product'");
+      $up = $connect->query("UPDATE product SET quantity=quantity+'$quantity' WHERE code='$product_c'");
       $_SESSION['response']=$quantity." of stock added successfully";
       $_SESSION['res_type']="success";
     }

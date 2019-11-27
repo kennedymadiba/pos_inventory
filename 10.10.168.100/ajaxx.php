@@ -10,8 +10,8 @@ if($category!=""){
           echo "<select class='form-control' name='product' required>";
            echo "<option value='' selected disabled='true'>select department</option>";
             while($row=mysqli_fetch_array($res)){
-                  $code = $row['code'];
-            echo "<option value='$code'>".$row['name']."</option>";
+                  $code = $row['code'].'|'.$row['item_quantity'];
+            echo "<option value='$code'>".$row['name']."(".$row['item_quantity']."ml)</option>";
         }
           echo "</select>";
 }

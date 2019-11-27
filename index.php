@@ -1,5 +1,43 @@
 <?php
+session_start();
+
   include_once '10.10.168.100/includes/db_connect.php';
+
+
+  //get latest trans id
+    $sql = "SELECT transaction_id FROM transaction ORDER BY id DESC LIMIT 1";
+    $exe = $connect->query($sql);
+    if(mysqli_num_rows($exe)>0)
+    {
+        while($row = $exe->fetch_assoc())
+        {
+            $trans_id = $row['transaction_id']+1;
+        }
+    }
+    else{
+        $trans_id = 1;
+    }
+
+
+
+
+  if(isset($_POST['transaction']))
+  {
+      $code = $_SESSION['barray'];
+      $price = $_SESSION['parray'];
+      $qty = $_SESSION['qarray'];
+      $t_time = date("Y-m-d");
+
+
+      $i=0;
+
+      while($i<count($code)){
+
+          $sql ="INSERT INTO transaction(code,qty,price,transaction_id,time) VALUES ('$code[$i]','$qty[$i]','$price[$i]','$trans_id','$t_time')";
+          $exe = $connect->query($sql);
+          $i++;
+      }
+  }
 
 ?>
 <!doctype html>
@@ -17,192 +55,206 @@
     <!-- Material Design Bootstrap -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.8.10/css/mdb.min.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://printjs-4de6.kxcdn.com/print.min.js"></script>
+    <link rel="stylesheet" href="https://printjs-4de6.kxcdn.com/print.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
 
     <title>POS</title>
+    <script src="engine.js"></script>
+    <link rel="stylesheet" href="mobileTab.css">
+    <link rel="stylesheet" href="custom.css">
+
+    <style>
+table {
+	table-layout:fixed;
+	margin:auto;
+}
+
+
+
+.table-cart thead, tfoot {
+	display:table;
+	width:100%;
+	 width:calc(100% - 18px);
+}
+.table-cart tbody {
+	height:250px;
+	overflow:auto;
+	overflow-x:hidden;
+	display:block;
+	width:100%;
+}
+.table-cart tbody tr {
+	display:table;
+	width:100%;
+	table-layout:fixed;
+}
+.items{
+  height:390px;
+	overflow:auto;
+	overflow-Y:hidden;
+  width:100%;
+
+
+
+
+}
+.slev{
+  width: 40px;
+  height: 40px;
+  padding: 6px 0px;
+  border-radius: 100%;
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.42857;" data-toggle="modal" data-target="#menu"><small class="fa fa-clipboard"></small>
+}
+.masta{
+  width: 40px;
+  height: 40px;
+  padding: 6px 0px;
+  border-radius: 100%;
+  text-align: center;
+  font-size: 14px;
+  background-color:white;
+  line-height: 1.42857;" data-toggle="modal" data-target="#menu"><small class="fa fa-clipboard"></small>
+}
+
+</style>
+
     <script>
-    // $(document).on('click', ".product", function () {
-        //    $.get("shop.php",function(data){
-        //            $(".items").html(data);
-        //        });
-        //     });
-        
+  $(document).ready(function(){
 
-        $(document).ready(function(){
+    $(".masta").click(function(){
+      //  $(".slave").toggle();
+       setTimeout(function(){
+         $(".slev1").toggle();
+       }, 10);
 
-            setInterval(function(){
-                $.get("shop.php",function(data){
-                   $(".items").html(data);
-               });
-            
-            }, 1000);
-                      
-            var barcode=[];
-            var quantity=[];
-            var name=[];
-            var price=[];
-            var countlicks=0;
-            $(document).on('click', ".product", function () {
-                
-                countlicks=countlicks+1;
-                var product=$(this).val();
-                var split=product.split(",");
+       setTimeout(function(){
+         $(".slev2").toggle();
+       }, 50);
 
-                if(countlicks<=split[2]){
-                
-                //check amount of product selected remaining;
-                $.post("checkIfExistInDb.php",{code:split[0]},function(data){
-                    
-                if(data>0){
-                    //reduce inventory on click
-                $.post("dbToCart.php",{reduceInventory:split[0]},function(data){
-                    //refresh page
-                      $.get("shop.php",function(data){
-                           $(".items").html(data);
-                      }); 
-                     //refresh page end 
-                 });   
-                }
-                });
-                
-                if (barcode.length == 0) {
-                    barcode.push(split[0]);
-                    name.push(split[1]);
-                    price.push(split[2]);
-                    quantity.push(1);
-                                      
-                    
-                 }else{
-                     if(barcode.includes(split[0])){
-                        var count=barcode.length;
-                        
-                        var i=0;
-                        while(i<count){
-                            if(barcode[i]===split[0]){
-                            quantity[i]=parseInt(quantity[i], 10)+1;
-                            }
-                            i++;
-                        }
-                     }else{
-                        barcode.push(split[0]);
-                        name.push(split[1]);
-                        price.push(split[2]);
-                        quantity.push(1);}
-                     }
-                    
-            //          $.get("shop.php",function(data){
-            //     $(".items").html(data);
-            // }); 
-               
-               
-            
-
-                 $.post("cart.php",{barcodeArray:barcode,nameArray:name,priceArray:price,quantityArray:quantity},function(data){
-                    
-                   $("table").html(data);
-                   });
-
-                 
-                }
-           
-            });
-
-                         
-              
-
-           
-            $(document).on('click', "#removeItem", function () {
-                var remove=$(this).val();
-                var ProductDetail=remove.split(".");
-                
-                $.post("returnToDb.php",{barcode:ProductDetail[0],quantity:ProductDetail[1]},function(){
-                    
-                    $('#'+ProductDetail[0]).remove(); 
-                    
-                    if(barcode.includes(ProductDetail[0])){
-                        var existingArrayCount= barcode.length;
-                        var j=0;
-
-                        while(j<existingArrayCount){
-                            if(barcode[j]===ProductDetail[0]){
-                                barcode.splice(j,1);
-                                price.splice(j,1);
-                                name.splice(j,1);
-                                quantity.splice(j,1);
-                            }
-                            j++;
-                        }
-                        //refresh cart after deleting
-                        $.post("cart.php",{barcodeArray:barcode,nameArray:name,priceArray:price,quantityArray:quantity},function(data){
-                    
-                            $("table").html(data);
-
-                   //after removing from cart we must return data to inventory and refresh         
-                    $.get("shop.php",function(data){
-                    $(".items").html(data);
-                    });
-                    //after removing from cart we must return data to inventory and refresh end
-
-                   });
-                    }
-                    
-                });
-        });
-
-
-            
-        
+       setTimeout(function(){
+         $(".slev3").toggle();
+       }, 90);
+       setTimeout(function(){
+         $(".slev4").toggle();
+       }, 130);
+    });
+    $(".stats").click(function(){
+      $(".tytol").text("Stats");
+        $.get("todaySales.php",function(data){
+        $(".menuDisplay").html(data);
+      });
+    });
+    $(".profile").click(function(){
+      $(".tytol").text("Profile");
+      $.get("profile.php",function(data){
+      $(".menuDisplay").html(data);
+    });
     });
 
-        // $(document).on('click', ".product", function () {
-               
-        //     $.get("shop.php",function(data){
-        //         $(".items").html(data);
-        //     });
-        // });
-    
-    
-        
+  });
 
-    </script>
+
+</script>
+
+
+
 </head>
-<body style="background: #F1F3F4;" >
 
-<div class="container-fluid" STYLE="margin-top:10px;">
-    <div class="row">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-body">
-                    <table class="table" id="cart-item-table-header">
-                        <thead>
-                        <tr class="active">
-                            <td width="100" class="text-right"> Barcode</td>
-                            <td width="200" class="text-left">Items</td>
-                            <td width="120" class="text-center hidden-xs">Unit Price</td>
-                            <td width="100" class="text-center">Quantity</td>
-                            <td width="100" class="text-right">Total Price</td>
-                            <td>Delete</td>
-                        </tr>
-                        </thead>
-                        <tbody>
 
-                        </tbody>
-                        
+
+
+<body style="background-color:#011627;" >
+
+<nav class="navbar navbar-icon-top navbar-expand-lg navbar-dark " style="box-shadow:none; background-color:#011627;">
+
+  <button class="btn  masta" data-toggle="popover" title="menu"><small class="fa fa-list"></small></button>
+  <button class="btn btn-warning slev slev2 stats" style="display:none;" data-toggle="modal" data-target="#menu"><small class="fa fa-chart-line"></small></button>
+  <button class="btn btn-warning slev slev3 profile" style="display:none;" data-toggle="modal" data-target="#menu"><small class="fa fa-cogs"></small></button>
+  <button class="btn btn-warning slev slev4 "style="display:none;" ><small class="fa fa-power-off"></small></button>
+  <!-- <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+    <small class="fa fa-list"></small>
+  </button> -->
+  <!-- <a class="navbar-brand" href="#">Posnbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb</a> -->
+
+
+  <!-- <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <a class="navbar-brand" href="#">Pos</a>
+
+  </div> -->
+</nav>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="menu" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true" style="background-color:#011627;">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header" style="background-color:#011627;">
+        <h5 class="modal-title tytol" id="exampleModalLongTitle" style="color:white">Title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color:white">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body menuDisplay">
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<div class="container-fluid" STYLE="">
+<ul style="border:0" class="nav nav-tabs device-small row nav-fill" id="myTab" role="tablist">
+  <li style="" class="nav-item col-xs-4 col-sm-12">
+    <a style="border:0" class="nav-link active" id="home-tab" data-toggle="tab" href="#cart" role="tab" aria-controls="cart" aria-selected="true">Cart <span class="badge badge-primary phoneCount">0</span></a>
+  </li>
+  <li class="nav-item col-xs-4 col-sm-12">
+    <a style="border:0" class="nav-link" id="profile-tab" data-toggle="tab" href="#inventory" role="tab" aria-controls="inventory" aria-selected="false">Inventory</a>
+  </li>
+  <!-- <li class="nav-item">
+    <a class="nav-link" id="contact-tab" data-toggle="tab" href="#contact" role="tab" aria-controls="contact" aria-selected="false">Contact</a>
+  </li> -->
+</ul><br>
+    <div class="row tab-content">
+            <div class="col-md-6 tab-pane show active col-xs-12 col-sm-12"  id="cart" role="tabpanel">
+            <div class="car" style="background:white">
+                <div class="card-body table-cart ">
+                <table class='table table-responsive' id='cart-item-table-header table'>
+                    <thead>
+                    <tr style='background-color:#ff9f1c;color:white'>
+                    <th>Barcode</th>
+                    <th>Items</th>
+                    <th>Unit Price</th>
+                    <th>Quantity</th>
+                    <th>Sub-total</th>
+                    <th>remove</th>
+                    </tr>
+                    </thead>
+
+                        <tbody></tbody>
+
                         <tfoot>
-                        <tr>
+                        <!-- <tr style="background-color:#96ceb4">
                             <th>Products count ( 0 )</th>
                             <th></th>
                             <th></th>
                             <th></th>
                             <th>Sub Total</th>
                             <th>0 ksh</th>
-                        </tr>
-                        
-                        <tr style="background:#DFF0D8;">
+                        </tr> -->
+
+                        <tr style="background-color:#011627;color:white">
+                            <th>Products count ( 0 )</th>
                             <th></th>
                             <th></th>
                             <th></th>
-                            <th></th>
-                            <th>Net payable</th>
+                            <th>Net total</th>
                             <th>0 ksh</th>
                         </tr>
                         </tfoot>
@@ -211,8 +263,8 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-6">
-            <div class="card">
+        <div class="col-md-6 tab-pane show col-xs-12 col-sm-12"  id="inventory" role="tabpanel">
+            <div class="car" style="background-color:#ff9f1c">
                 <div class="card-body">
                     <form>
                         <div class="form-row align-items-center">
@@ -220,15 +272,15 @@
                                 <label class="sr-only" for="inlineFormInputGroup">Username</label>
                                 <div class="input-group mb-2" >
                                     <div class="input-group-prepend">
-                                        <div class="input-group-text"><span class="fa fa-search"></span></div>
-                                        <div class="input-group-text"><span class="fa fa-barcode"></span></div>
+                                        <div class="input-group-text"style="color:#ff9f1c;background-color:white;border-radius:0%"><span class="fa fa-search"></span></div>
+                                        <div class="input-group-text" style="color:#ff9f1c;background-color:white;border-radius:0%"><span class="fa fa-barcode"></span></div>
                                     </div>
-                                    <input  type="text" class="form-control col-12" id="inlineFormInputGroup" placeholder="Barcode, product name, code" >
+                                    <input style="border-radius:0%" type="text" class="form-control col-12" id="inlineFormInputGroup" placeholder="Barcode, product name, code" >
                                 </div>
                             </div>
                         </div>
                     </form>
-                    <div class="container">
+                    <div class="container-fluid">
                         <div class="row items">
                             <!-- <div class="items"> -->
                             <?php
@@ -242,13 +294,13 @@
                                     ?>
 
 
-                                    <button value="<?php echo $product[0].','.$product[1].','.$product[2].','.$product[3]?>" class="col-md-2 product" style="background-color:white;border:1px solid gray;margin-top:8px;margin-right:8px;" id="product">
-                                        <img src="<?="10.10.168.100/$image"?>" alt="<?=$row['name']?>"  width="50px;">
-                                        <small class="text-info"><?=$row['name']?></small><br>(<small><?=$row['item_quantity']?> ml</small>)
-                                        <br>
+            <button value="<?php echo $product[0].','.$product[1].','.$product[2]?>" class="col-md-3 col-sm-3 col-xs-3 product  btn"  id="product" style="background-color:white; box-shadow:none; max-width:130px;border-radius:0%">
+                    <img src="<?="10.10.168.101/$image"?>" alt="<?=$row['name']?>"  width="50">
+                    <small style="color:#011627" class=""><?=$row['name']?></small><br>(<small><?=$row['item_quantity']?> ml</small>)
+                    <br>
 
-                                        <small><?=$row['code']?></small>
-                                    </button>
+                    <small><?=$row['code']?></small>
+            </button>
                                 <?php
                                 }
 
@@ -260,6 +312,50 @@
             </div>
         </div>
     </div>
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Confirm purchase</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" action="#" id="printJS-form">
+                        <p>Invoice : #<?=$trans_id?> </p>
+                        <br>
+                        <table class="table receipt">
+                          <thead>
+                          <tr>
+                              <th>Item</th>
+                              <th>Unit price</th>
+                              <th>Qty</th>
+                              <th>Total</th>
+                          </tr>
+                          </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                    </form>
+
+                    <button type="button" onclick="printJS('printJS-form', 'html')" class="btn btn-default btn-sm">
+                        Print
+                    </button>
+                </div>
+                <div class="modal-footer">
+                    <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF'])?>" method="post">
+                        <button class="btn btn-success btn-sm" type="submit" name="transaction">
+                            Save transaction
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--    end modal-->
 </div>
 
 

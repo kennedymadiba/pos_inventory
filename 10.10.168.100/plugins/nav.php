@@ -20,7 +20,10 @@
         <a class="nav-link" href="products.php">Products</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#">Sales Report</a>
+        <a class="nav-link" href="stocklogs.php">Stock Logs</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="salesreport.php">Sales Report</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="users.php">Manage Users</a>
@@ -30,7 +33,7 @@
           Manage Account
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item" href="#">change password</a>
+          <a class="dropdown-item" href="changepass.php">change password</a>
           <a class="dropdown-item" href="logout.php">Logout</a>
         </div>
       </li>

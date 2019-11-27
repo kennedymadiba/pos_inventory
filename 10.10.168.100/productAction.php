@@ -12,7 +12,7 @@ if(isset($_POST['btn_action']))
 	$quantity = $_POST['quantity'];
 
 	$photo = $_FILES['image']['name'];
-  $upload = "images/".$photo;
+    $upload = "images/".$photo;
 
     $db->where ('code', $code);
   	$db->where ('category_id', $category);
@@ -27,6 +27,7 @@ if(isset($_POST['btn_action']))
       $data = array("code"=>$code,"name"=>$name,"image"=>$upload,"category_id"=>$category,"sp"=>$sp,"bp"=>$bp,"item_quantity"=>$item_quantity,"quantity"=>$quantity);
 	    if($db->insert('product',$data))
 	    {
+	        $data = array("name"=>$name,"quantity"=>$quantity);
 	        move_uploaded_file($_FILES['image']['tmp_name'], $upload);
 	        $_SESSION['response']="New product added successfully";
 	        $_SESSION['res_type']="success";
